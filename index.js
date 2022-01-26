@@ -31,20 +31,21 @@ async function check(guess) {
     // check if the letter at the specified index in the guess word exactly
     // matches the letter at the specified index in the puzzle
     if (guess[i] === puzzle[i]) {
-      results += chalk.black.bgGreen.bold(` ${guess[i]} `) + " ";
+      results += chalk.white.bgGreen.bold(` ${guess[i]} `);
       continue;
     }
     // check if the letter at the specified index in the guess word is at least
     // contained in the puzzle at some other position
     if (puzzle.includes(guess[i])) {
-      results += chalk.black.bgYellow.bold(` ${guess[i]} `) + " ";
+      results += chalk.white.bgYellow.bold(` ${guess[i]} `);
       continue;
     }
     // otherwise the letter doesn't exist at all in the puzzle
-    results += chalk.white.bgGrey.bold(` ${guess[i]} `) + " ";
+    results += chalk.white.bgGrey.bold(` ${guess[i]} `);
   }
-  // 15 in below code is 5 letters and 2 spaces in start and end of characters, 3 char for a letter, total 3 *5 =15
   glob_results += results.padEnd(results.length + terminal_cols - 15, " ");
+  // 15 in above code is 5 letters and 2 spaces in start and end of characters, 3 char for a letter, total 3 *5 =15
+  // it has to be hardcoded as the chalk's result changes the number of characters
   process.stdout.write(glob_results);
 }
 

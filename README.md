@@ -2,9 +2,34 @@
 
 An implementation of the popular Wordle game in Node.js.
 
-![Screenshot of Nodele game](nodele.jpg)
+#### Screenshot 1
+
+![Screenshot 1 of Nodele game](screenshots/0.png)<br>
+
+#### Screenshot 2
+
+![Screenshot 1 of Nodele game](screenshots/1.png)
+
+#### Screenshot 3
+
+![Screenshot 1 of Nodele game](screenshots/2.png)
+
+#### Screenshot 4
+
+![Screenshot 1 of Nodele game](screenshots/3.png)
+
+#### Screenshot 5
+
+![Screenshot 1 of Nodele game](screenshots/4.png)
+
+#### Screenshot 6
+
+![Screenshot 1 of Nodele game](screenshots/5.png)
 
 ## Running
+
+> Warning: Resizing terminal after starting will mess with the layout.<br>
+> INFO: try to run terminal in full screen before running
 
 ### Option 1 - Dev Container
 

@@ -3,6 +3,7 @@ const chalk = require("chalk");
 const wordsJSON = require("./words.json");
 const terminal_cols = process.stdout.columns;
 const MAX_TRIES = 6;
+const previous_gusses = [];
 
 // global results for showing all results at once
 let glob_results = "";
@@ -17,15 +18,15 @@ const wordlePrompt = {
       return "Word must be 5 letters";
     } else if (!/^[a-z]+$/i.test(value)) {
       return "Word must only contain letters";
-    } else if (
-      !wordsJSON.find((word) => {
-        return word.toUpperCase() === value.toUpperCase();
-      })
-    ) {
+    } else if (!wordsJSON.includes(value.toUpperCase())) {
+      // wordsJSON is now in uppercase, so can directly check via includes
       return "Word not found in word list";
+    } else if (previous_gusses.includes(value.toUpperCase())) {
+      // same word already entered
+      return "You have already entered this word";
     }
     return true;
-  }
+  },
 };
 
 async function check(guess) {
@@ -60,7 +61,16 @@ async function play(tries) {
   if (tries < MAX_TRIES) {
     // ask the player for a guess word
     const response = await prompts(wordlePrompt);
-    const guess = response.word.toUpperCase();
+    const guess = response.word?.toUpperCase(); // optional chaining
+    if (typeof guess === "undefined") {
+      // this scenario happens when a user presses Ctrl+C and terminates program
+      // previously it was throwing an error
+      console.clear();
+      console.log("You closed the game, Good bye!");
+      process.exit(0);
+    }
+    // add to already enterd words list
+    previous_gusses.push(guess);
     // if the word matches, they win!
     if (guess == puzzle) {
       // show board again

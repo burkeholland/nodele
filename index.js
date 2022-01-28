@@ -16,10 +16,16 @@ const wordlePrompt = {
     if (value.length != 5) {
       return "Word must be 5 letters";
     } else if (!/^[a-z]+$/i.test(value)) {
-      return "Word must only contain alphabets";
+      return "Word must only contain letters";
+    } else if (
+      !wordsJSON.find((word) => {
+        return word.toUpperCase() === value.toUpperCase();
+      })
+    ) {
+      return "Word not found in word list";
     }
     return true;
-  },
+  }
 };
 
 async function check(guess) {

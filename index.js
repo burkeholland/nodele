@@ -26,7 +26,7 @@ const wordlePrompt = {
       return "You have already entered this word";
     }
     return true;
-  },
+  }
 };
 
 async function check(guess) {
@@ -61,7 +61,7 @@ async function play(tries) {
   if (tries < MAX_TRIES) {
     // ask the player for a guess word
     const response = await prompts(wordlePrompt);
-    const guess = response.word?.toUpperCase(); // optional chaining
+    const guess = response.word.toUpperCase(); // optional chaining
     if (typeof guess === "undefined") {
       // this scenario happens when a user presses Ctrl+C and terminates program
       // previously it was throwing an error

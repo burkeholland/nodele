@@ -26,7 +26,7 @@ const wordlePrompt = {
       return "You have already entered this word";
     }
     return true;
-  }
+  },
 };
 
 async function check(guess) {
@@ -61,13 +61,15 @@ async function play(tries) {
   if (tries < MAX_TRIES) {
     // ask the player for a guess word
     const response = await prompts(wordlePrompt);
-    const guess = response.word.toUpperCase(); // optional chaining
-    if (typeof guess === "undefined") {
+    let guess;
+    try {
+      guess = response.word.toUpperCase();
+    } catch (e) {
       // this scenario happens when a user presses Ctrl+C and terminates program
       // previously it was throwing an error
       console.clear();
       console.log("You closed the game, Good bye!");
-      process.exit(0);
+      process.exit(0); // 0 for exitting without throwing error
     }
     // add to already enterd words list
     previous_gusses.push(guess);

@@ -12,6 +12,9 @@ let puzzle = "";
 const wordlePrompt = {
   type: "text",
   name: "word",
+  format: (value) => {
+    return value.toUpperCase();
+  },
   message: "Enter a 5 letter word...",
   validate: (value) => {
     if (value.length != 5) {
@@ -61,7 +64,7 @@ async function play(tries) {
   if (tries < MAX_TRIES) {
     // ask the player for a guess word
     const response = await prompts(wordlePrompt);
-    const guess = response.word.toUpperCase(); // optional chaining
+    const guess = response.word;
     if (typeof guess === "undefined") {
       // this scenario happens when a user presses Ctrl+C and terminates program
       // previously it was throwing an error
@@ -93,7 +96,11 @@ async function main() {
   randomNumber = Math.floor(Math.random(wordsJSON.length) * wordsJSON.length);
   puzzle = wordsJSON[randomNumber].toUpperCase();
   // start the game
-  await play(0);
+  try {
+    await play(0);
+  } catch {
+    console.log("Game ended");
+  }
 }
 
 main();

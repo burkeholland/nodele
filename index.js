@@ -1,12 +1,13 @@
 const prompts = require("prompts");
 const chalk = require("chalk");
 const wordsJSON = require("./words.json");
-const terminal_cols = process.stdout.columns;
+
+const TERMINAL_COLS = process.stdout.columns;
 const MAX_TRIES = 6;
-const previous_gusses = [];
+const previousGuesses = [];
 
 // global results for showing all results at once
-let glob_results = "";
+let globalResults = "";
 let puzzle = "";
 
 const wordlePrompt = {
@@ -24,7 +25,7 @@ const wordlePrompt = {
     } else if (!wordsJSON.includes(value.toUpperCase())) {
       // wordsJSON is now in uppercase, so can directly check via includes
       return "Word not found in word list";
-    } else if (previous_gusses.includes(value.toUpperCase())) {
+    } else if (previousGuesses.includes(value.toUpperCase())) {
       // same word already entered
       return "You have already entered this word";
     }
@@ -53,10 +54,10 @@ async function check(guess) {
     // otherwise the letter doesn't exist at all in the puzzle
     results += chalk.white.bgGrey.bold(` ${guess[i]} `);
   }
-  glob_results += results.padEnd(results.length + terminal_cols - 15, " ");
+  globalResults += results.padEnd(results.length + TERMINAL_COLS - 15, " ");
   // 15 in above code is 5 letters and 2 spaces in start and end of characters, 3 char for a letter, total 3 *5 =15
   // it has to be hardcoded as the chalk's result changes the number of characters
-  process.stdout.write(glob_results);
+  process.stdout.write(globalResults);
 }
 
 async function play(tries) {
@@ -73,7 +74,7 @@ async function play(tries) {
       process.exit(0);
     }
     // add to already enterd words list
-    previous_gusses.push(guess);
+    previousGuesses.push(guess);
     // if the word matches, they win!
     if (guess == puzzle) {
       // show board again
@@ -93,7 +94,7 @@ async function play(tries) {
 
 async function main() {
   // get a random word
-  randomNumber = Math.floor(Math.random(wordsJSON.length) * wordsJSON.length);
+  const randomNumber = Math.floor(Math.random(wordsJSON.length) * wordsJSON.length);
   puzzle = wordsJSON[randomNumber].toUpperCase();
   // start the game
   try {

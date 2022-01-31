@@ -36,22 +36,26 @@ async function check(guess) {
   // clear previous results
   console.clear();
   let results = "";
+  let puzzleNotMatchedLetters = puzzle;
   // loop over each letter in the word
   for (let i in guess) {
+    const letter = guess[i];
     // check if the letter at the specified index in the guess word exactly
     // matches the letter at the specified index in the puzzle
-    if (guess[i] === puzzle[i]) {
-      results += chalk.white.bgGreen.bold(` ${guess[i]} `);
+    if (letter === puzzle[i]) {
+      puzzleNotMatchedLetters = puzzleNotMatchedLetters.replace(letter, "");
+      results += chalk.white.bgGreen.bold(` ${letter} `);
       continue;
     }
     // check if the letter at the specified index in the guess word is at least
     // contained in the puzzle at some other position
-    if (puzzle.includes(guess[i])) {
-      results += chalk.white.bgYellow.bold(` ${guess[i]} `);
+    if (puzzleNotMatchedLetters.includes(letter)) {
+      puzzleNotMatchedLetters = puzzleNotMatchedLetters.replace(letter, "");
+      results += chalk.white.bgYellow.bold(` ${letter} `);
       continue;
     }
     // otherwise the letter doesn't exist at all in the puzzle
-    results += chalk.white.bgGrey.bold(` ${guess[i]} `);
+    results += chalk.white.bgGrey.bold(` ${letter} `);
   }
   glob_results += results.padEnd(results.length + terminal_cols - 15, " ");
   // 15 in above code is 5 letters and 2 spaces in start and end of characters, 3 char for a letter, total 3 *5 =15

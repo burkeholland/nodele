@@ -70,7 +70,7 @@ async function play(tries) {
       // previously it was throwing an error
       console.clear();
       console.log("You closed the game, Good bye!");
-      process.exit(0);
+      process.exit(0); // 0 for exitting without throwing error
     }
     // add to already enterd words list
     previous_gusses.push(guess);
@@ -96,11 +96,7 @@ async function main() {
   randomNumber = Math.floor(Math.random(wordsJSON.length) * wordsJSON.length);
   puzzle = wordsJSON[randomNumber].toUpperCase();
   // start the game
-  try {
-    await play(0);
-  } catch {
-    console.log("Game ended");
-  }
+  await play(0);
 }
 
 main();

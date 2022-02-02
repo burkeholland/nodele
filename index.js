@@ -1,15 +1,16 @@
 const prompts = require("prompts");
 const chalk = require("chalk");
 const i18n = require("./i18n/index.js")
-const terminal_cols = process.stdout.columns;
+
+const TERMINAL_COLS = process.stdout.columns;
 const MAX_TRIES = 6;
-const previous_gusses = [];
+const previousGuesses = [];
 
 // initialize words and texts
 const { TEXTS, WORDS } = i18n.load(process.argv[ 2 ] || "en");
 
 // global results for showing all results at once
-let glob_results = "";
+let globalResults = "";
 let puzzle = "";
 
 const wordlePrompt = {
@@ -27,7 +28,7 @@ const wordlePrompt = {
     } else if (!WORDS.includes(value.toUpperCase())) {
       // WORDS is now in uppercase, so can directly check via includes
       return TEXTS.WORD_NOT_FOUND_IN_WORD_LIST;
-    } else if (previous_gusses.includes(value.toUpperCase())) {
+    } else if (previousGuesses.includes(value.toUpperCase())) {
       // same word already entered
       return TEXTS.WORD_ALREADY_ENTERED;
     }
@@ -39,27 +40,31 @@ async function check(guess) {
   // clear previous results
   console.clear();
   let results = "";
+  let puzzleNotMatchedLetters = puzzle;
   // loop over each letter in the word
   for (let i in guess) {
+    const letter = guess[i];
     // check if the letter at the specified index in the guess word exactly
     // matches the letter at the specified index in the puzzle
-    if (guess[i] === puzzle[i]) {
-      results += chalk.white.bgGreen.bold(` ${guess[i]} `);
+    if (letter === puzzle[i]) {
+      puzzleNotMatchedLetters = puzzleNotMatchedLetters.replace(letter, "");
+      results += chalk.white.bgGreen.bold(` ${letter} `);
       continue;
     }
     // check if the letter at the specified index in the guess word is at least
     // contained in the puzzle at some other position
-    if (puzzle.includes(guess[i])) {
-      results += chalk.white.bgYellow.bold(` ${guess[i]} `);
+    if (puzzleNotMatchedLetters.includes(letter)) {
+      puzzleNotMatchedLetters = puzzleNotMatchedLetters.replace(letter, "");
+      results += chalk.white.bgYellow.bold(` ${letter} `);
       continue;
     }
     // otherwise the letter doesn't exist at all in the puzzle
-    results += chalk.white.bgGrey.bold(` ${guess[i]} `);
+    results += chalk.white.bgGrey.bold(` ${letter} `);
   }
-  glob_results += results.padEnd(results.length + terminal_cols - 15, " ");
+  globalResults += results.padEnd(results.length + TERMINAL_COLS - 15, " ");
   // 15 in above code is 5 letters and 2 spaces in start and end of characters, 3 char for a letter, total 3 *5 =15
   // it has to be hardcoded as the chalk's result changes the number of characters
-  process.stdout.write(glob_results);
+  process.stdout.write(globalResults);
 }
 
 async function play(tries) {
@@ -73,10 +78,10 @@ async function play(tries) {
       // previously it was throwing an error
       console.clear();
       console.log(TEXTS.GAME_CLOSED_GOODBYE);
-      process.exit(0);
+      process.exit(0); // 0 for exitting without throwing error
     }
     // add to already enterd words list
-    previous_gusses.push(guess);
+    previousGuesses.push(guess);
     // if the word matches, they win!
     if (guess == puzzle) {
       // show board again
@@ -96,14 +101,10 @@ async function play(tries) {
 
 async function main() {
   // get a random word
-  randomNumber = Math.floor(Math.random(WORDS.length) * WORDS.length);
+  const randomNumber = Math.floor(Math.random(WORDS.length) * WORDS.length);
   puzzle = WORDS[randomNumber].toUpperCase();
   // start the game
-  try {
-    await play(0);
-  } catch {
-    console.log(TEXTS.GAME_ENDED);
-  }
+  await play(0);
 }
 
 main();

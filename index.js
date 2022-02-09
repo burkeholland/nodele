@@ -36,27 +36,32 @@ const wordlePrompt = {
 async function check(guess) {
   // clear previous results
   console.clear();
-  let results = "";
   let puzzleNotMatchedLetters = puzzle;
-  // loop over each letter in the word
-  for (let i in guess) {
-    const letter = guess[i];
+  const colors = Array(guess.length).fill(chalk.white.bgGrey);
+  // loop through guess and mark green if fully correct
+  for (let i = 0; i < guess.length; i++) {
     // check if the letter at the specified index in the guess word exactly
     // matches the letter at the specified index in the puzzle
-    if (letter === puzzle[i]) {
-      puzzleNotMatchedLetters = puzzleNotMatchedLetters.replace(letter, "");
-      results += chalk.white.bgGreen.bold(` ${letter} `);
-      continue;
+    if (guess[i] === puzzleNotMatchedLetters[i]) {
+      colors[i] = chalk.white.bgGreen;
+      // remove letter from answer, so it's not scored again
+      puzzleNotMatchedLetters = puzzleNotMatchedLetters.replace(guess[i], " ");
     }
+  }
+  // loop through guess and mark yellow if partially correct
+  for (let i = 0; i < guess.length; i++) {
     // check if the letter at the specified index in the guess word is at least
     // contained in the puzzle at some other position
-    if (puzzleNotMatchedLetters.includes(letter)) {
-      puzzleNotMatchedLetters = puzzleNotMatchedLetters.replace(letter, "");
-      results += chalk.white.bgYellow.bold(` ${letter} `);
-      continue;
+    if (guess[i] !== puzzleNotMatchedLetters[i] && puzzleNotMatchedLetters.includes(guess[i])) {
+      colors[i] = chalk.white.bgYellow;
+      // remove letter from answer, so it's not scored again
+      puzzleNotMatchedLetters = puzzleNotMatchedLetters.replace(guess[i], " ");
     }
-    // otherwise the letter doesn't exist at all in the puzzle
-    results += chalk.white.bgGrey.bold(` ${letter} `);
+  }
+  let results = "";
+  // loop over each letter and use its color to add it to the output
+  for (let i = 0; i < guess.length; i++) {
+    results += colors[i].bold(` ${guess[i]} `);
   }
   globalResults += results.padEnd(results.length + TERMINAL_COLS - 15, " ");
   // 15 in above code is 5 letters and 2 spaces in start and end of characters, 3 char for a letter, total 3 *5 =15

@@ -1,10 +1,13 @@
 const prompts = require("prompts");
 const chalk = require("chalk");
-const wordsJSON = require("./words.json");
+const i18n = require("./i18n/index.js")
 
 const TERMINAL_COLS = process.stdout.columns;
 const MAX_TRIES = 6;
 const previousGuesses = [];
+
+// initialize words and texts
+const { TEXTS, WORDS } = i18n.load(process.argv[ 2 ] || "en");
 
 // global results for showing all results at once
 let globalResults = "";
@@ -16,18 +19,18 @@ const wordlePrompt = {
   format: (value) => {
     return value.toUpperCase();
   },
-  message: "Enter a 5 letter word...",
+  message: TEXTS.ENTER_A_5_LETTER_WORD_PROMPT,
   validate: (value) => {
     if (value.length != 5) {
-      return "Word must be 5 letters";
+      return TEXTS.WORD_MUST_BE_5_LETTERS;
     } else if (!/^[a-z]+$/i.test(value)) {
-      return "Word must only contain letters";
-    } else if (!wordsJSON.includes(value.toUpperCase())) {
-      // wordsJSON is now in uppercase, so can directly check via includes
-      return "Word not found in word list";
+      return TEXTS.WORD_MUST_ONLY_CONTAIN_LETTERS;
+    } else if (!WORDS.includes(value.toUpperCase())) {
+      // WORDS is now in uppercase, so can directly check via includes
+      return TEXTS.WORD_NOT_FOUND_IN_WORD_LIST;
     } else if (previousGuesses.includes(value.toUpperCase())) {
       // same word already entered
-      return "You have already entered this word";
+      return TEXTS.WORD_ALREADY_ENTERED;
     }
     return true;
   }
@@ -79,7 +82,7 @@ async function play(tries) {
       // this scenario happens when a user presses Ctrl+C and terminates program
       // previously it was throwing an error
       console.clear();
-      console.log("You closed the game, Good bye!");
+      console.log(TEXTS.GAME_CLOSED_GOODBYE);
       process.exit(0); // 0 for exitting without throwing error
     }
     // add to already enterd words list
@@ -88,7 +91,7 @@ async function play(tries) {
     if (guess == puzzle) {
       // show board again
       check(guess);
-      console.log("WINNER!");
+      console.log(TEXTS.WINNER);
     } else {
       check(guess);
       // this forces std out to print out the results for the last guess
@@ -97,14 +100,14 @@ async function play(tries) {
       play(++tries);
     }
   } else {
-    console.log(`INCORRECT: The word was ${puzzle}`);
+    console.log(i18n.stringTemplateParser(TEXTS.INCORRECT_THE_WORD_WAS_puzzle, {puzzle}));
   }
 }
 
 async function main() {
   // get a random word
-  const randomNumber = Math.floor(Math.random(wordsJSON.length) * wordsJSON.length);
-  puzzle = wordsJSON[randomNumber].toUpperCase();
+  const randomNumber = Math.floor(Math.random(WORDS.length) * WORDS.length);
+  puzzle = WORDS[randomNumber].toUpperCase();
   // start the game
   await play(0);
 }

@@ -1,0 +1,10 @@
+{
+    "ENTER_A_5_LETTER_WORD_PROMPT": "Enter a 5 letter word...",
+    "WORD_MUST_BE_5_LETTERS": "Word must be 5 letters",
+    "WORD_MUST_ONLY_CONTAIN_LETTERS": "Word must only contain letters",
+    "WORD_NOT_FOUND_IN_WORD_LIST" : "Word not found in word list",
+    "WORD_ALREADY_ENTERED": "You have already entered this word",
+    "GAME_CLOSED_GOODBYE": "You closed the game. Good bye!",
+    "INCORRECT_THE_WORD_WAS_puzzle": "INCORRECT: The word was {{puzzle}}",
+    "WINNER": "WINNER!"
+}

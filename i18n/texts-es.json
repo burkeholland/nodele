@@ -1,0 +1,10 @@
+{
+    "ENTER_A_5_LETTER_WORD_PROMPT": "Introduce una palabra de 5 letras...",
+    "WORD_MUST_BE_5_LETTERS": "La palabra debe tener 5 letras",
+    "WORD_MUST_ONLY_CONTAIN_LETTERS": "La palabra debe contener solo letras",
+    "WORD_NOT_FOUND_IN_WORD_LIST" : "La palabra no es válida",
+    "WORD_ALREADY_ENTERED": "Ya has introducido esta palabra",
+    "GAME_CLOSED_GOODBYE": "Juego cerrado. ¡Hasta pronto!",
+    "INCORRECT_THE_WORD_WAS_puzzle": "INCORRECTO. La palabra era {{puzzle}}",
+    "WINNER": "¡GANASTE!"
+}

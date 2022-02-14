@@ -6,5 +6,9 @@
     "WORD_ALREADY_ENTERED": "You have already entered this word",
     "GAME_CLOSED_GOODBYE": "You closed the game. Good bye!",
     "INCORRECT_THE_WORD_WAS_puzzle": "INCORRECT: The word was {{puzzle}}",
-    "WINNER": "WINNER!"
+    "WINNER": "WINNER!",
+    "NEXT_WORD_PROMPT": "Next word?",
+    "YES": "Yes",
+    "NO": "No",
+    "GOODBYE": "Good bye!"
 }

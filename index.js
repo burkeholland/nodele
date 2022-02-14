@@ -4,35 +4,46 @@ const i18n = require("./i18n/index.js")
 
 const TERMINAL_COLS = process.stdout.columns;
 const MAX_TRIES = 6;
-const previousGuesses = [];
 
 // initialize words and texts
 const { TEXTS, WORDS } = i18n.load(process.argv[ 2 ] || "en");
 
 // global results for showing all results at once
+let previousGuesses = [];
 let globalResults = "";
 let puzzle = "";
 
-const wordlePrompt = {
-  type: "text",
-  name: "word",
-  format: (value) => {
-    return value.toUpperCase();
-  },
+const PROMPTS = {
+  askForWord: {
+    type: "text",
+    name: "word",
+    format: (value) => {
+      return value.toUpperCase();
+    },
   message: TEXTS.ENTER_A_5_LETTER_WORD_PROMPT,
-  validate: (value) => {
-    if (value.length != 5) {
-      return TEXTS.WORD_MUST_BE_5_LETTERS;
-    } else if (!/^[a-z]+$/i.test(value)) {
-      return TEXTS.WORD_MUST_ONLY_CONTAIN_LETTERS;
-    } else if (!WORDS.includes(value.toUpperCase())) {
-      // WORDS is now in uppercase, so can directly check via includes
-      return TEXTS.WORD_NOT_FOUND_IN_WORD_LIST;
-    } else if (previousGuesses.includes(value.toUpperCase())) {
-      // same word already entered
-      return TEXTS.WORD_ALREADY_ENTERED;
+    validate: (value) => {
+      if (value.length != 5) {
+        return TEXTS.WORD_MUST_BE_5_LETTERS;
+      } else if (!/^[a-z]+$/i.test(value)) {
+        return TEXTS.WORD_MUST_ONLY_CONTAIN_LETTERS;
+      } else if (!WORDS.includes(value.toUpperCase())) {
+        // WORDS is now in uppercase, so can directly check via includes
+        return TEXTS.WORD_NOT_FOUND_IN_WORD_LIST;
+      } else if (previousGuesses.includes(value.toUpperCase())) {
+        // same word already entered
+        return TEXTS.WORD_ALREADY_ENTERED;
+      }
+      return true;
     }
-    return true;
+  },
+  askForNewGame: {
+    type: "select",
+    name: "value",
+    message: TEXTS.NEXT_WORD_PROMPT,
+    choices: [
+      { title: TEXTS.YES, value: true },
+      { title: TEXTS.NO, value: false }
+    ]
   }
 };
 
@@ -75,9 +86,8 @@ async function check(guess) {
 async function play(tries) {
   // the user gets 5 tries to solve the puzzle not including the first guess
   if (tries < MAX_TRIES) {
-    // ask the player for a guess word
-    const response = await prompts(wordlePrompt);
-    const guess = response.word;
+    // ask the player for a guess word (spread operator is used to create a new object and force prompt not to be cached)
+    const {word: guess} = await prompts({...PROMPTS.askForWord});
     if (typeof guess === "undefined") {
       // this scenario happens when a user presses Ctrl+C and terminates program
       // previously it was throwing an error
@@ -97,19 +107,41 @@ async function play(tries) {
       // this forces std out to print out the results for the last guess
       process.stdout.write("\n");
       // repeat the game and increment the number of tries
-      play(++tries);
+      await play(++tries);
     }
   } else {
     console.log(i18n.stringTemplateParser(TEXTS.INCORRECT_THE_WORD_WAS_puzzle, {puzzle}));
   }
 }
 
-async function main() {
+function initializeNewGame() {
+  // reset global variables
+  previousGuesses = [];
+  globalResults = "";
+  puzzle = "";
+
   // get a random word
   const randomNumber = Math.floor(Math.random(WORDS.length) * WORDS.length);
   puzzle = WORDS[randomNumber].toUpperCase();
-  // start the game
-  await play(0);
+}
+
+async function hasToStartANewGame(){
+  process.stdout.write("\n");
+  const { value } = await prompts(PROMPTS.askForNewGame);
+  process.stdout.write("\n");
+  return value;
+}
+
+async function main() {
+  let startNewGame = true;
+
+  while(startNewGame) {
+    initializeNewGame();
+    // start the game
+    await play(0);
+    startNewGame = await hasToStartANewGame();
+  }
+  console.log(TEXTS.GOODBYE);
 }
 
 main();

@@ -20,7 +20,7 @@ const PROMPTS = {
     format: (value) => {
       return value.toUpperCase();
     },
-  message: TEXTS.ENTER_A_5_LETTER_WORD_PROMPT,
+    message: () => `${TEXTS.ENTER_A_5_LETTER_WORD_PROMPT} [${previousGuesses.length+1}/${MAX_TRIES}]`,
     validate: (value) => {
       if (value.length != 5) {
         return TEXTS.WORD_MUST_BE_5_LETTERS;
@@ -101,7 +101,8 @@ async function play(tries) {
     if (guess == puzzle) {
       // show board again
       check(guess);
-      console.log(TEXTS.WINNER);
+      process.stdout.write("\n");
+      console.log(chalk.white.green.bold(TEXTS.WINNER));
     } else {
       check(guess);
       // this forces std out to print out the results for the last guess
@@ -110,7 +111,7 @@ async function play(tries) {
       await play(++tries);
     }
   } else {
-    console.log(i18n.stringTemplateParser(TEXTS.INCORRECT_THE_WORD_WAS_puzzle, {puzzle}));
+    console.log(i18n.stringTemplateParser(TEXTS.INCORRECT_THE_WORD_WAS_puzzle, {puzzle: chalk.white.bgRed.bold(puzzle)}));
   }
 }
 

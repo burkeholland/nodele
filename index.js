@@ -116,6 +116,8 @@ async function play(tries) {
 }
 
 function initializeNewGame() {
+  console.clear();
+
   // reset global variables
   previousGuesses = [];
   globalResults = "";
